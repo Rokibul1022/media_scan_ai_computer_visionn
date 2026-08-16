@@ -8,11 +8,13 @@ const RAW_VISION_URL = process.env.VISION_URL || 'http://localhost:5070';
 // fromService hostport property (internal private-network address, plain HTTP).
 // Full URLs (e.g. https://mediscan-vision.onrender.com) are kept as-is.
 const VISION_URL = /^https?:\/\//i.test(RAW_VISION_URL) ? RAW_VISION_URL : `http://${RAW_VISION_URL}`;
+// Allow slow-but-warm CPU inference on cloud instances to finish (default 90s).
+const YOLO_TIMEOUT_MS = Number(process.env.YOLO_TIMEOUT_MS || 90000);
 
 export async function detectWithYolo(buffer, mime = 'image/png') {
   const form = new FormData();
   form.append('file', new Blob([buffer], { type: mime }), 'scan.jpg');
-  const res = await fetch(`${VISION_URL}/detect`, { method: 'POST', body: form, signal: AbortSignal.timeout(30000) });
+  const res = await fetch(`${VISION_URL}/detect`, { method: 'POST', body: form, signal: AbortSignal.timeout(YOLO_TIMEOUT_MS) });
   if (!res.ok) {
     const body = await res.text().catch(() => '');
     throw new Error(`Vision service error ${res.status}: ${body}`);

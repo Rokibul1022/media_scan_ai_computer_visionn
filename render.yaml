@@ -55,6 +55,8 @@ services:
     buildCommand: pip install -r server/requirements-vision.txt
     startCommand: uvicorn vision_service:app --host 0.0.0.0 --port $PORT --app-dir server
     healthCheckPath: /health
+    # CPU-only YOLO inference can be slow on shared instances; allow 5 min/request.
+    timeout: 300
     autoDeploy: true
     envVars:
       - key: PYTHON_VERSION

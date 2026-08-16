@@ -55,7 +55,7 @@ def load_model():
         print(f"[vision] loading YOLO model from {MODEL_PATH} ...")
         import torch
 
-        torch.set_num_threads(2)
+        torch.set_num_threads(1)
         _model = YOLO(MODEL_PATH)
         _model_names = _model.names if hasattr(_model, "names") else {}
         print(f"[vision] model ready. classes: {_model_names}")
@@ -339,7 +339,7 @@ async def detect(file: UploadFile = File(...)):
 
     if model is not None:
         try:
-            results = model(img_bgr, conf=CONF_THRESHOLD, verbose=False)
+            results = model(img_bgr, conf=CONF_THRESHOLD, imgsz=640, verbose=False)
             for r in results:
                 if r.boxes is None:
                     continue
@@ -406,7 +406,13 @@ def humanize(label: str) -> str:
 @app.get("/health")
 async def health():
     model, names = load_model()
-    return {"status": "ok", "model_loaded": model is not None, "classes": names}
+    return {
+        "status": "ok",
+        "version": "1.1.0",
+        "model_loaded": model is not None,
+        "max_img_dim": MAX_IMG_DIM,
+        "classes": names,
+    }
 
 
 @app.get("/")
