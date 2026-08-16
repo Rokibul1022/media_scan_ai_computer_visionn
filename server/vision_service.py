@@ -37,6 +37,10 @@ CONF_THRESHOLD = float(os.getenv("YOLO_CONF", "0.15"))
 # only wastes memory (phone X-ray photos can be 12MP+ and OOM a 2GB instance).
 MAX_IMG_DIM = int(os.getenv("MAX_IMG_DIM", "1280"))
 
+# When false (free/low-RAM deployments), skip loading torch/ultralytics entirely
+# and rely on the OpenCV heuristic detector + the API's AI-vision marking.
+YOLO_ENABLED = os.getenv("YOLO_ENABLED", "true").lower() in ("1", "true", "yes", "on")
+
 _model = None
 _model_names = {}
 
@@ -44,6 +48,8 @@ _model_names = {}
 def load_model():
     """Load the YOLO model once (lazy). Returns (model, names) or (None, {})."""
     global _model, _model_names
+    if not YOLO_ENABLED:
+        return None, {}
     if _model is not None:
         return _model, _model_names
     try:
@@ -408,7 +414,8 @@ async def health():
     model, names = load_model()
     return {
         "status": "ok",
-        "version": "1.1.0",
+        "version": "1.2.0",
+        "yolo_enabled": YOLO_ENABLED,
         "model_loaded": model is not None,
         "max_img_dim": MAX_IMG_DIM,
         "classes": names,

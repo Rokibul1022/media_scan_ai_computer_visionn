@@ -1,0 +1,9 @@
+# Lightweight vision service deps (no torch/ultralytics) — fits Render Free
+# (512 MB). Uses the OpenCV heuristic detector; the API still adds AI-vision
+# marking. To enable the trained YOLO model, use requirements-vision.txt on a
+# Standard (2 GB) instance instead and set YOLO_ENABLED=true.
+opencv-python-headless
+numpy
+fastapi
+uvicorn
+python-multipart

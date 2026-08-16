@@ -44,20 +44,25 @@ services:
           property: hostport
 
   # ---------------- Vision service (Python) ----------------
-  # NOTE: Render has NO GPU instances. YOLOv8 runs on CPU here — that's fine
-  # (the model is only 22MB), just slower than a local GPU. torch needs RAM,
-  # so use at least "standard" (2 GB); free/starter (512 MB) can OOM and
-  # crash-loop. If it fails anyway, the API degrades to AI-vision marking.
+  # NOTE: Render has NO GPU instances. The trained YOLO model needs torch, which
+  # requires ~2 GB RAM — use "standard" with the full requirements + YOLO_ENABLED.
+  #
+  # FREE DEFAULT: the OpenCV heuristic detector needs no torch, so it fits the
+  # free (512 MB) plan. Detection quality stays good because the Node API also
+  # runs AI-vision marking on top. To enable YOLO later, set plan: standard,
+  # buildCommand: pip install -r server/requirements-vision.txt, and
+  # YOLO_ENABLED=true.
   - type: web
     name: mediscan-vision
     runtime: python
-    plan: standard
-    buildCommand: pip install -r server/requirements-vision.txt
+    plan: free
+    buildCommand: pip install -r server/requirements-vision-lite.txt
     startCommand: uvicorn vision_service:app --host 0.0.0.0 --port $PORT --app-dir server
     healthCheckPath: /health
-    # CPU-only YOLO inference can be slow on shared instances; allow 5 min/request.
     timeout: 300
     autoDeploy: true
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.0
+      - key: YOLO_ENABLED
+        value: "false"
