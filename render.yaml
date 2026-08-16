@@ -31,8 +31,12 @@ services:
         sync: false
       - key: GROQ_VISION_MODELS
         sync: false
-      # Point the API at the Python vision service. Render can only inject
-      # "host:port" (hostport), so yolo.js normalizes it into a full URL.
+      # Point the API at the Python vision service over Render's private network.
+      # fromService hostport injects an internal "host:port" (plain HTTP, port
+      # 10000) reachable only between services in the SAME workspace & region.
+      # yolo.js normalizes it to http://host:port. If private networking isn't
+      # available, override VISION_URL in the dashboard with the public URL
+      # (https://mediscan-vision.onrender.com) — the code accepts full URLs too.
       - key: VISION_URL
         fromService:
           name: mediscan-vision

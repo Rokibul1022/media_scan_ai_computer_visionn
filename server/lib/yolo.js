@@ -5,8 +5,9 @@
 
 const RAW_VISION_URL = process.env.VISION_URL || 'http://localhost:5070';
 // Normalize: VISION_URL may be a full URL or a bare "host:port" from Render's
-// fromService hostport property — add the scheme so fetch always works.
-const VISION_URL = /^https?:\/\//i.test(RAW_VISION_URL) ? RAW_VISION_URL : `https://${RAW_VISION_URL}`;
+// fromService hostport property (internal private-network address, plain HTTP).
+// Full URLs (e.g. https://mediscan-vision.onrender.com) are kept as-is.
+const VISION_URL = /^https?:\/\//i.test(RAW_VISION_URL) ? RAW_VISION_URL : `http://${RAW_VISION_URL}`;
 
 export async function detectWithYolo(buffer, mime = 'image/png') {
   const form = new FormData();

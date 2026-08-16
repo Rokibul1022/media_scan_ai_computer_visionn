@@ -143,7 +143,11 @@ git push -u origin main
   - `mediscan-vision` (Python YOLO/OpenCV) — X-ray fault marking
 - Set the secret env vars on `mediscan-api` (never commit them):
   `GROQ_API_KEY`, `GROQ_API_KEY_2`, `GROQ_API_KEY_3`, `GROQ_MODELS`,
-  `GROQ_VISION_MODELS`. `VISION_URL` is filled in automatically.
+  `GROQ_VISION_MODELS`. `VISION_URL` is auto-filled over Render's private
+  network — both services must be in the **same workspace and region**. If
+  that doesn't connect (or to be extra safe), set `VISION_URL` manually in
+  the dashboard to `https://mediscan-vision.onrender.com` (the API accepts
+  either a full URL or the injected `host:port`).
 - Use the **Standard** plan (2 GB RAM) or higher for `mediscan-vision` —
   Render has no GPU, so YOLO runs on CPU, and torch needs memory. On
   Free/Starter (512 MB) it can OOM; if it does, the app degrades gracefully
