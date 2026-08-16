@@ -31,12 +31,13 @@ services:
         sync: false
       - key: GROQ_VISION_MODELS
         sync: false
-      # Point the API at the Python vision service (auto-resolved below).
+      # Point the API at the Python vision service. Render can only inject
+      # "host:port" (hostport), so yolo.js normalizes it into a full URL.
       - key: VISION_URL
         fromService:
           name: mediscan-vision
           type: web
-          property: url
+          property: hostport
 
   # ---------------- Vision service (Python) ----------------
   # NOTE: Render has NO GPU instances. YOLOv8 runs on CPU here — that's fine

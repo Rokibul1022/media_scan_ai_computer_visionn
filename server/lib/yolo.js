@@ -3,7 +3,10 @@
  * Returns findings with normalized boxes in the same shape the frontend expects.
  */
 
-const VISION_URL = process.env.VISION_URL || 'http://localhost:5070';
+const RAW_VISION_URL = process.env.VISION_URL || 'http://localhost:5070';
+// Normalize: VISION_URL may be a full URL or a bare "host:port" from Render's
+// fromService hostport property — add the scheme so fetch always works.
+const VISION_URL = /^https?:\/\//i.test(RAW_VISION_URL) ? RAW_VISION_URL : `https://${RAW_VISION_URL}`;
 
 export async function detectWithYolo(buffer, mime = 'image/png') {
   const form = new FormData();
