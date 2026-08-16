@@ -11,11 +11,19 @@ Run inside the venv:
 
 import io
 import os
+import gc
 import math
 import numpy as np
 import cv2
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import JSONResponse
+
+# Keep CPU/memory usage low on shared/limited instances (e.g. Render Standard).
+# Set BEFORE torch/ultralytics are imported (they are imported lazily below).
+os.environ.setdefault("OMP_NUM_THREADS", "2")
+os.environ.setdefault("MKL_NUM_THREADS", "2")
+os.environ.setdefault("OPENBLAS_NUM_THREADS", "2")
+os.environ.setdefault("NUMEXPR_NUM_THREADS", "2")
 
 app = FastAPI(title="MediScan Vision Service", version="1.0.0")
 
@@ -24,6 +32,10 @@ MODEL_PATH = os.getenv(
     os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", "yolov8_fracture_best.pt"),
 )
 CONF_THRESHOLD = float(os.getenv("YOLO_CONF", "0.15"))
+# Downscale incoming images to at most this many pixels on the long edge before
+# any processing. YOLO internally resizes to 640 anyway, so full-res decoding
+# only wastes memory (phone X-ray photos can be 12MP+ and OOM a 2GB instance).
+MAX_IMG_DIM = int(os.getenv("MAX_IMG_DIM", "1280"))
 
 _model = None
 _model_names = {}
@@ -41,6 +53,9 @@ def load_model():
             print(f"[vision] model not found at {MODEL_PATH} - using OpenCV fallback")
             return None, {}
         print(f"[vision] loading YOLO model from {MODEL_PATH} ...")
+        import torch
+
+        torch.set_num_threads(2)
         _model = YOLO(MODEL_PATH)
         _model_names = _model.names if hasattr(_model, "names") else {}
         print(f"[vision] model ready. classes: {_model_names}")
@@ -174,6 +189,17 @@ def classify_image(gray):
     return "scan"
 
 
+def _downscale(img, max_dim=MAX_IMG_DIM):
+    """Resize so the longest edge is <= max_dim. Returns (img, w, h)."""
+    h, w = img.shape[:2]
+    m = max(h, w)
+    if m <= max_dim:
+        return img, w, h
+    scale = max_dim / m
+    nw, nh = max(1, int(round(w * scale))), max(1, int(round(h * scale)))
+    return cv2.resize(img, (nw, nh), interpolation=cv2.INTER_AREA), nw, nh
+
+
 def opencv_anomalies(img_rgb, img_w, img_h):
     """
     Detect suspicious regions on X-rays / scans without a trained model.
@@ -288,8 +314,10 @@ async def detect(file: UploadFile = File(...)):
         img_bgr = cv2.imdecode(img_arr, cv2.IMREAD_COLOR)
         if img_bgr is None:
             return JSONResponse(status_code=400, content={"error": "Could not decode image"})
+        del img_arr, raw
+        # Downscale before any heavy work to keep memory flat on small instances.
+        img_bgr, w, h = _downscale(img_bgr)
         img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
-        h, w = img_rgb.shape[:2]
     except Exception as e:
         return JSONResponse(status_code=400, content={"error": str(e)})
 
@@ -352,6 +380,10 @@ async def detect(file: UploadFile = File(...)):
         note = f"{used.upper()} detected {len(findings)} potential area(s) to review."
     else:
         note = "No obvious faults detected by automated scan review. Please confirm with your doctor."
+
+    # Free large buffers eagerly so memory stays flat across requests.
+    del img_bgr, img_rgb, gray
+    gc.collect()
 
     return {
         "engine": used,
