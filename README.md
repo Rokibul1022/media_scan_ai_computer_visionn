@@ -2,7 +2,7 @@
 
 AI-powered medical report analyzer that converts complex medical reports into plain-language
 summaries with critical-value alerts, doctor questions, and audio output.
-
+**Deployed Link:** - https://reportscan.netlify.app/
 **Fully rewritten** as a modern, deployable **React + Node.js** stack (was vanilla JS + Python/FastAPI).
 
 ## ✨ Highlights
