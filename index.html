@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediScan AI - Medical Report Analysis</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">🩺 MediScan AI</div>
+            <div class="nav-menu">
+                <a href="#home" class="nav-link active" data-page="home">Home</a>
+                <a href="#analyze" class="nav-link" data-page="analyze">Analyze</a>
+                <a href="#results" class="nav-link" data-page="results">Results</a>
+                <a href="#chat" class="nav-link" data-page="chat">AI Chat</a>
+                <a href="#tools" class="nav-link" data-page="tools">Health Tools</a>
+                <a href="pricing.html" class="nav-link">💎 Pricing</a>
+                <a href="#history" class="nav-link" data-page="history">History</a>
+                <a href="#about" class="nav-link" data-page="about">About</a>
+            </div>
+            <button class="theme-toggle" id="themeToggle">🌙</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Page 1: Home -->
+        <div class="page active" id="home">
+            <div class="hero">
+                <h1>🩺 MediScan AI</h1>
+                <p class="hero-subtitle">Transform complex medical reports into clear, understandable insights</p>
+                <div class="hero-features">
+                    <div class="feature-item">📄 PDF & Image Support</div>
+                    <div class="feature-item">🤖 AI-Powered Analysis</div>
+                    <div class="feature-item">🔊 Audio Summaries</div>
+                    <div class="feature-item">💬 Smart Chatbot</div>
+                </div>
+                <button class="cta-btn" onclick="navigateTo('analyze')">Start Analysis →</button>
+            </div>
+        </div>
+
+        <!-- Page 2: Analyze -->
+        <div class="page" id="analyze">
+            <h2 class="page-title">Select Report Category</h2>
+            <div class="category-grid" id="categoryGrid"></div>
+            
+            <div class="upload-section" id="uploadSection" style="display:none;">
+                <h2 id="selectedCategory"></h2>
+                <div class="upload-zone" id="uploadZone">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                    </svg>
+                    <p>Drop image, PDF or paste text</p>
+                    <input type="file" id="fileInput" accept="image/*,.pdf" multiple hidden>
+                    <button onclick="document.getElementById('fileInput').click()">Browse files</button>
+                </div>
+                <textarea id="textInput" placeholder="Or paste report text here..." rows="6"></textarea>
+                <button class="analyze-btn" id="analyzeBtn">Analyze Report</button>
+            </div>
+        </div>
+
+        <!-- Page 3: Results -->
+        <div class="page" id="results">
+            <div class="results-content" id="resultsContent" style="display:none;">
+                <div class="result-header">
+                    <h2>Analysis Results</h2>
+                    <div class="result-actions">
+                        <button id="audioBtn" class="icon-btn">🔊 Listen</button>
+                        <button id="pauseBtn" class="icon-btn" style="display:none;">⏸ Pause</button>
+                        <button id="downloadBtn" class="icon-btn">📥 Download TXT</button>
+                        <button id="downloadPdfBtn" class="icon-btn">📄 Export PDF</button>
+                    </div>
+                </div>
+                
+                <div class="critical-alerts" id="criticalAlerts"></div>
+                
+                <div class="summary-card">
+                    <h3>Plain Language Summary</h3>
+                    <div id="summaryText"></div>
+                </div>
+
+                <div class="suggestions-card">
+                    <h3>💡 AI Suggestions</h3>
+                    <div id="suggestionsText" class="suggestions-loading">Loading suggestions...</div>
+                </div>
+
+                <div class="questions-card">
+                    <h3>Questions to Ask Your Doctor</h3>
+                    <ul id="questionsList"></ul>
+                </div>
+
+                <div class="extracted-text">
+                    <button class="toggle-btn" id="toggleExtracted">Show Extracted Text</button>
+                    <pre id="extractedText" style="display:none;"></pre>
+                </div>
+            </div>
+            <div class="empty-state" id="resultsEmpty">
+                <div class="empty-icon">📊</div>
+                <h3>No Results Yet</h3>
+                <p>Analyze a report to see results here</p>
+                <button class="cta-btn" onclick="navigateTo('analyze')">Start Analysis</button>
+            </div>
+        </div>
+
+        <!-- Page 4: Chat -->
+        <div class="page" id="chat">
+            <div class="chatbot-section">
+                <div class="chat-header">
+                    <h2>🤖 AI Medical Assistant</h2>
+                    <p>Upload reports, ask questions, or get mental health support</p>
+                </div>
+                
+                <div class="chat-mode-selector">
+                    <button class="mode-btn active" data-mode="medical">💊 Medical Q&A</button>
+                    <button class="mode-btn" data-mode="therapy">🧠 Mental Health Support</button>
+                    <button class="mode-btn" data-mode="voice">🎤 Voice Notes</button>
+                </div>
+                
+                <div class="chat-features">
+                    <button class="feature-btn" onclick="document.getElementById('chatFileInput').click()">
+                        <span class="feature-icon">📷</span>
+                        <span>Upload Image</span>
+                    </button>
+                    <button class="feature-btn" onclick="document.getElementById('chatPdfInput').click()">
+                        <span class="feature-icon">📄</span>
+                        <span>Upload PDF</span>
+                    </button>
+                    <button class="feature-btn" id="searchToggleBtn">
+                        <span class="feature-icon">🔍</span>
+                        <span>Web Search</span>
+                    </button>
+                    <button class="feature-btn" id="voiceRecordBtn" style="display:none;">
+                        <span class="feature-icon">⏺</span>
+                        <span>Start Recording</span>
+                    </button>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages">
+                    <div class="chat-message assistant">
+                        <div class="message-content">👋 Hi! I'm your AI medical assistant. Upload a report, ask questions, or get mental health support.</div>
+                    </div>
+                </div>
+                
+                <div class="chat-input-area">
+                    <input type="file" id="chatFileInput" accept="image/*" hidden>
+                    <input type="file" id="chatPdfInput" accept=".pdf" hidden>
+                    <textarea id="chatInput" placeholder="Ask about your medical report or search medical topics..." rows="2"></textarea>
+                    <button id="chatSendBtn" class="send-btn">➤</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 5: Health Tools -->
+        <div class="page" id="tools">
+            <h2 class="page-title">Health Tools & Calculators</h2>
+            
+            <div class="tools-grid">
+                <!-- BMI Calculator -->
+                <div class="tool-card">
+                    <div class="tool-icon">⚖️</div>
+                    <h3>BMI Calculator</h3>
+                    <div class="tool-inputs">
+                        <input type="number" id="height" placeholder="Height (cm)" class="tool-input">
+                        <input type="number" id="weight" placeholder="Weight (kg)" class="tool-input">
+                        <button class="tool-btn" onclick="calculateBMI()">Calculate</button>
+                    </div>
+                    <div id="bmiResult" class="tool-result"></div>
+                </div>
+
+                <!-- Biological Age Calculator -->
+                <div class="tool-card">
+                    <div class="tool-icon">🧬</div>
+                    <h3>Biological Age</h3>
+                    <div class="tool-inputs">
+                        <input type="number" id="actualAge" placeholder="Actual Age" class="tool-input">
+                        <input type="number" id="cholesterol" placeholder="Cholesterol (mg/dL)" class="tool-input">
+                        <input type="number" id="bloodPressure" placeholder="Systolic BP" class="tool-input">
+                        <button class="tool-btn" onclick="calculateBioAge()">Calculate</button>
+                    </div>
+                    <div id="bioAgeResult" class="tool-result"></div>
+                </div>
+
+                <!-- Cost Estimator -->
+                <div class="tool-card">
+                    <div class="tool-icon">💰</div>
+                    <h3>Treatment Cost Estimator</h3>
+                    <div class="tool-inputs">
+                        <select id="treatmentType" class="tool-input">
+                            <option value="">Select Treatment</option>
+                            <option value="blood-test">Blood Test Panel</option>
+                            <option value="xray">X-Ray</option>
+                            <option value="mri">MRI Scan</option>
+                            <option value="ct-scan">CT Scan</option>
+                            <option value="ultrasound">Ultrasound</option>
+                            <option value="ecg">ECG/EKG</option>
+                        </select>
+                        <button class="tool-btn" onclick="estimateCost()">Estimate</button>
+                    </div>
+                    <div id="costResult" class="tool-result"></div>
+                </div>
+
+                <!-- Hospital Finder -->
+                <div class="tool-card">
+                    <div class="tool-icon">🏥</div>
+                    <h3>Nearest Hospital Finder</h3>
+                    <div class="tool-inputs">
+                        <select id="specialtyType" class="tool-input">
+                            <option value="">Select Specialty</option>
+                            <option value="cardiology">Cardiology</option>
+                            <option value="neurology">Neurology</option>
+                            <option value="orthopedics">Orthopedics</option>
+                            <option value="emergency">Emergency</option>
+                        </select>
+                        <button class="tool-btn" onclick="findHospital()">Find Nearby</button>
+                    </div>
+                    <div id="hospitalResult" class="tool-result"></div>
+                </div>
+
+                <!-- Organ Health Dashboard -->
+                <div class="tool-card tool-card-wide">
+                    <div class="tool-icon">🫀</div>
+                    <h3>Organ Health Dashboard</h3>
+                    <div class="organ-dashboard" id="organDashboard">
+                        <div class="organ-item">
+                            <div class="organ-name">❤️ Heart</div>
+                            <div class="organ-bar"><div class="organ-fill" style="width: 85%; background: #28a745;"></div></div>
+                            <div class="organ-status">Healthy (85%)</div>
+                        </div>
+                        <div class="organ-item">
+                            <div class="organ-name">🫁 Lungs</div>
+                            <div class="organ-bar"><div class="organ-fill" style="width: 78%; background: #28a745;"></div></div>
+                            <div class="organ-status">Good (78%)</div>
+                        </div>
+                        <div class="organ-item">
+                            <div class="organ-name">🫘 Kidneys</div>
+                            <div class="organ-bar"><div class="organ-fill" style="width: 65%; background: #ffc107;"></div></div>
+                            <div class="organ-status">Fair (65%)</div>
+                        </div>
+                        <div class="organ-item">
+                            <div class="organ-name">🫀 Liver</div>
+                            <div class="organ-bar"><div class="organ-fill" style="width: 90%; background: #28a745;"></div></div>
+                            <div class="organ-status">Excellent (90%)</div>
+                        </div>
+                    </div>
+                    <button class="tool-btn" onclick="updateOrganHealth()">Update from Latest Report</button>
+                </div>
+
+                <!-- Language Selector -->
+                <div class="tool-card">
+                    <div class="tool-icon">🌐</div>
+                    <h3>Language Settings</h3>
+                    <div class="tool-inputs">
+                        <select id="languageSelect" class="tool-input" onchange="changeLanguage()">
+                            <option value="en">English</option>
+                            <option value="es">Español (Spanish)</option>
+                            <option value="bn">বাংলা (Bengali)</option>
+                            <option value="hi">हिन्दी (Hindi)</option>
+                            <option value="ar">العربية (Arabic)</option>
+                            <option value="zh">中文 (Chinese)</option>
+                            <option value="fr">Français (French)</option>
+                            <option value="de">Deutsch (German)</option>
+                            <option value="pt">Português (Portuguese)</option>
+                            <option value="ru">Русский (Russian)</option>
+                        </select>
+                    </div>
+                    <div id="languageResult" class="tool-result">Reports will be translated to your selected language</div>
+                </div>
+
+                <!-- Analytics Dashboard -->
+                <div class="tool-card tool-card-wide">
+                    <div class="tool-icon">📊</div>
+                    <h3>Analytics Dashboard</h3>
+                    <div class="analytics-grid">
+                        <div class="analytics-item">
+                            <div class="analytics-number">0</div>
+                            <div class="analytics-label">Total Reports</div>
+                        </div>
+                        <div class="analytics-item">
+                            <div class="analytics-number">0</div>
+                            <div class="analytics-label">Critical Alerts</div>
+                        </div>
+                        <div class="analytics-item">
+                            <div class="analytics-number">N/A</div>
+                            <div class="analytics-label">Most Common</div>
+                        </div>
+                        <div class="analytics-item">
+                            <div class="analytics-number">0</div>
+                            <div class="analytics-label">This Month</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 6: History -->
+        <div class="page" id="history">
+            <h2 class="page-title">Analysis History</h2>
+            <div class="empty-state">
+                <div class="empty-icon">📋</div>
+                <h3>No History Yet</h3>
+                <p>Your analyzed reports will appear here</p>
+                <p class="empty-note">Note: History is not saved in this version (no database)</p>
+            </div>
+        </div>
+
+        <!-- Page 6: About -->
+        <div class="page" id="about">
+            <div class="about-content">
+                <h2 class="page-title">About MediScan AI</h2>
+                <div class="about-grid">
+                    <div class="about-card">
+                        <div class="about-icon">🎯</div>
+                        <h3>Our Mission</h3>
+                        <p>Making medical reports accessible and understandable for everyone through AI-powered analysis.</p>
+                    </div>
+                    <div class="about-card">
+                        <div class="about-icon">🔒</div>
+                        <h3>Privacy First</h3>
+                        <p>Your data is processed securely. No reports are stored permanently in this version.</p>
+                    </div>
+                    <div class="about-card">
+                        <div class="about-icon">⚡</div>
+                        <h3>Powered by AI</h3>
+                        <p>Using an LLM for fast, accurate medical analysis.</p>
+                    </div>
+                    <div class="about-card">
+                        <div class="about-icon">🌐</div>
+                        <h3>12 Categories</h3>
+                        <p>From general prescriptions to oncology reports - comprehensive coverage.</p>
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <h3>Technology Stack</h3>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Vanilla JavaScript</span>
+                        <span class="tech-tag">Python FastAPI</span>
+                        <span class="tech-tag">LLM AI</span>
+                        <span class="tech-tag">Tesseract OCR</span>
+                        <span class="tech-tag">PyPDF2</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="loader" id="loader" style="display:none;">
+            <div class="spinner"></div>
+            <p>Analyzing your report...</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="chat.js"></script>
+    <script src="tools.js"></script>
+</body>
+</html>

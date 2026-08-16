@@ -1,0 +1,26 @@
+{
+  "name": "mediscan-ai",
+  "version": "3.0.0",
+  "private": true,
+  "description": "MediScan AI - AI-powered medical report analysis. React + Node.js.",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,vision,client -c blue,magenta,green \"npm run dev -w server\" \"npm run vision\" \"npm run dev -w client\"",
+    "dev:server": "npm run dev -w server",
+    "dev:client": "npm run dev -w client",
+    "vision:setup": "python3.12 -m venv server/venv && server/venv/bin/pip install -r server/requirements-vision.txt",
+    "vision": "server/venv/bin/python -m uvicorn vision_service:app --host 0.0.0.0 --port 5070 --app-dir server",
+    "build": "npm run build -w client",
+    "start": "npm run start -w server",
+    "install:all": "npm install && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

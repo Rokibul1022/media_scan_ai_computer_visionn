@@ -1,0 +1,25 @@
+# Netlify deployment for the MediScan AI frontend.
+# The backend API runs on Render — set VITE_API_URL to your Render API URL
+# (Site settings → Environment variables → VITE_API_URL = https://<your-api>.onrender.com/api)
+# and rebuild. Otherwise the /api proxy below is used as a fallback.
+
+[build]
+  command = "npm install && npm run build"
+  publish = "client/dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# SPA fallback: let React Router handle client-side routes (/analyze, /chat, ...).
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Fallback: proxy /api/* calls to the Render backend.
+# Only used when VITE_API_URL was NOT set at build time.
+# Replace the URL with your actual Render service URL.
+# [[redirects]]
+#   from = "/api/*"
+#   to = "https://mediscan-api.onrender.com/api/:splat"
+#   status = 200

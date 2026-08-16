@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing - MediScan AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .back-link {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .pricing-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .pricing-card.featured {
+            border: 3px solid #ffd700;
+            transform: scale(1.05);
+        }
+        
+        .pricing-card.featured::before {
+            content: "⭐ MOST POPULAR";
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffd700;
+            color: #333;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        
+        .tier-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .price {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .price-period {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1rem;
+        }
+        
+        .features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+        
+        .features li {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+        
+        .features li:last-child {
+            border-bottom: none;
+        }
+        
+        .subscribe-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .subscribe-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .faq-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 50px;
+        }
+        
+        .faq-section h2 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+        
+        .faq-item {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+        
+        .faq-question {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .faq-answer {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Back to Home</a>
+        
+        <div class="header">
+            <h1>🩺 MediScan AI Pricing</h1>
+            <p>Choose the perfect plan for your healthcare needs</p>
+        </div>
+        
+        <div class="pricing-grid">
+            <!-- Free Plan -->
+            <div class="pricing-card">
+                <div class="tier-name">FREE</div>
+                <div class="price">$0</div>
+                <div class="price-period">Forever free</div>
+                <ul class="features">
+                    <li>✓ 3 reports per month</li>
+                    <li>✓ Basic AI analysis</li>
+                    <li>✓ Text extraction</li>
+                    <li>✓ Plain language summary</li>
+                    <li>✗ Translation</li>
+                    <li>✗ Audio narration</li>
+                </ul>
+                <button class="subscribe-btn" onclick="selectPlan('free')">Get Started Free</button>
+            </div>
+            
+            <!-- Pro Plan -->
+            <div class="pricing-card">
+                <div class="tier-name">PRO</div>
+                <div class="price">$9.99</div>
+                <div class="price-period">per month</div>
+                <ul class="features">
+                    <li>✓ 50 reports per month</li>
+                    <li>✓ Advanced AI analysis</li>
+                    <li>✓ Multi-language OCR</li>
+                    <li>✓ Real-time translation</li>
+                    <li>✓ Audio narration</li>
+                    <li>✓ Trend analysis</li>
+                    <li>✓ Family profiles</li>
+                </ul>
+                <button class="subscribe-btn" onclick="selectPlan('pro')">Upgrade to Pro</button>
+            </div>
+            
+            <!-- Premium Plan -->
+            <div class="pricing-card featured">
+                <div class="tier-name">PREMIUM</div>
+                <div class="price">$19.99</div>
+                <div class="price-period">per month</div>
+                <ul class="features">
+                    <li>✓ Unlimited reports</li>
+                    <li>✓ All Pro features</li>
+                    <li>✓ Handwriting recognition</li>
+                    <li>✓ Batch processing</li>
+                    <li>✓ AI health coach</li>
+                    <li>✓ Priority support</li>
+                    <li>✓ End-to-end encryption</li>
+                    <li>✓ PDF export</li>
+                </ul>
+                <button class="subscribe-btn" onclick="selectPlan('premium')">Upgrade to Premium</button>
+            </div>
+            
+            <!-- Enterprise Plan -->
+            <div class="pricing-card">
+                <div class="tier-name">ENTERPRISE</div>
+                <div class="price">$99.99</div>
+                <div class="price-period">per month</div>
+                <ul class="features">
+                    <li>✓ Everything in Premium</li>
+                    <li>✓ Unlimited storage</li>
+                    <li>✓ Custom branding</li>
+                    <li>✓ API access</li>
+                    <li>✓ White-label solution</li>
+                    <li>✓ HIPAA compliance</li>
+                    <li>✓ Dedicated support</li>
+                </ul>
+                <button class="subscribe-btn" onclick="selectPlan('enterprise')">Contact Sales</button>
+            </div>
+        </div>
+        
+        <!-- FAQ Section -->
+        <div class="faq-section">
+            <h2>Frequently Asked Questions</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">Can I upgrade or downgrade my plan anytime?</div>
+                <div class="faq-answer">Yes! You can change your subscription plan at any time. Upgrades take effect immediately, and downgrades will apply at the end of your current billing cycle.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Is my medical data secure?</div>
+                <div class="faq-answer">Absolutely. We use end-to-end encryption (Premium+), and all data is processed securely. We're HIPAA compliant for Enterprise customers.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">What languages are supported?</div>
+                <div class="faq-answer">We support 50+ languages including English, Spanish, Bengali, Hindi, Arabic, Chinese, French, German, Portuguese, Russian, and many more.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Do you offer refunds?</div>
+                <div class="faq-answer">Yes, we offer a 14-day money-back guarantee on all paid plans. No questions asked.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Can I use this for my family?</div>
+                <div class="faq-answer">Yes! Pro and Premium plans include family profiles, allowing you to manage reports for multiple family members.</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function selectPlan(tier) {
+            const plans = {
+                free: {
+                    name: 'Free',
+                    message: 'Welcome to MediScan AI Free plan! You can now analyze up to 3 reports per month.'
+                },
+                pro: {
+                    name: 'Pro',
+                    message: 'Redirecting to checkout for Pro plan ($9.99/month)...\n\nThis is a demo. In production, you would be redirected to Stripe.'
+                },
+                premium: {
+                    name: 'Premium',
+                    message: 'Redirecting to checkout for Premium plan ($19.99/month)...\n\nThis is a demo. In production, you would be redirected to Stripe.'
+                },
+                enterprise: {
+                    name: 'Enterprise',
+                    message: 'Thank you for your interest in Enterprise!\n\nOur sales team will contact you shortly.'
+                }
+            };
+            
+            const selected = plans[tier];
+            
+            if (tier === 'free') {
+                localStorage.setItem('userTier', 'free');
+                alert(selected.message);
+                window.location.href = 'index.html';
+            } else if (tier === 'enterprise') {
+                alert(selected.message);
+                window.location.href = 'mailto:sales@mediscan.ai?subject=Enterprise Plan Inquiry';
+            } else {
+                if (confirm(selected.message + '\n\nProceed to checkout?')) {
+                    localStorage.setItem('userTier', tier);
+                    alert('✅ Successfully subscribed to ' + selected.name + ' plan!');
+                    window.location.href = 'index.html';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

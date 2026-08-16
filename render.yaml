@@ -1,0 +1,52 @@
+# Render blueprint for the MediScan AI backend.
+#
+# Creates TWO web services:
+#   1. mediscan-api     — Node/Express API (the frontend on Netlify talks to this)
+#   2. mediscan-vision  — Python YOLO / OpenCV fault detector (X-ray marking)
+#
+# The API auto-discovers the vision service URL through the VISION_URL env var,
+# so no manual wiring is needed.
+
+services:
+  # ---------------- Main API (Node) ----------------
+  - type: web
+    name: mediscan-api
+    runtime: node
+    plan: starter
+    buildCommand: npm install
+    startCommand: node server/index.js
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Set these in the Render dashboard (never commit keys to git):
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_API_KEY_2
+        sync: false
+      - key: GROQ_API_KEY_3
+        sync: false
+      - key: GROQ_MODELS
+        sync: false
+      - key: GROQ_VISION_MODELS
+        sync: false
+      # Point the API at the Python vision service (auto-resolved below).
+      - key: VISION_URL
+        fromService:
+          name: mediscan-vision
+          type: web
+          property: url
+
+  # ---------------- Vision service (Python) ----------------
+  - type: web
+    name: mediscan-vision
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r server/requirements-vision.txt
+    startCommand: uvicorn vision_service:app --host 0.0.0.0 --port $PORT --app-dir server
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
